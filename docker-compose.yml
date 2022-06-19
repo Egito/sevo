@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: ev
+      MYSQL_USER: salvador
+      MYSQL_PASSWORD: password@
+#      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      MYSQL_ALLOW_EMPTY_PASSWORD: '1'
+      MYSQL_ROOT_PASSWORD: root@
+    volumes:
+      - maria_db:/var/lib/mysql
+
+  wp:
+    image: wordpress
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: ev
+      WORDPRESS_DB_USER: salvador
+      WORDPRESS_DB_PASSWORD: password@
+    depends_on:
+      - db
+    volumes:
+      - ./dev:/var/www/html
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+  
+  phpmyadmin:
+    image: phpmyadmin
+#    container_name: myadm
+    restart: always
+    ports:
+      - 8081:80
+    environment:
+      - PMA_ARBITRARY=1
+
+volumes:
+  maria_db:

@@ -22,6 +22,7 @@ node_modules/
 *.log
 *.sql
 *.sqlite
+*.txt
 
 # vscode
 .vscode

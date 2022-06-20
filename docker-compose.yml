@@ -1,8 +1,43 @@
-version: '3.4'
+version: "3"
 
 services:
-  sevo:
-    image: sevo
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: sevo
+      MYSQL_USER: salvador
+      MYSQL_PASSWORD: salvador!
+      MYSQL_ALLOW_EMPTY_PASSWORD: '1'
+      MYSQL_ROOT_PASSWORD: salvador@
+    volumes:
+      - maria_db:/var/lib/mysql
+
+  wp:
+    image: wordpress:5.6-php7.2-fpm
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: sevo
+      WORDPRESS_DB_USER: salvador
+      WORDPRESS_DB_PASSWORD: salvador!
+    depends_on:
+      - db
+    volumes:
+      - ./html:/var/www/html
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+  
+  adm:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8081:80
+    depends_on:
+      - db
+    environment:
+      - PMA_ARBITRARY=1
+
+volumes:
+  maria_db:
